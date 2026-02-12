@@ -34,7 +34,8 @@ async def send_email(subject, content, receiver_email):
 
     server = None
     try:
-        logger.info(f"正在连接SMTP服务器，发送给 {receiver_email}...")
+        # logger.info(f"正在连接SMTP服务器，发送给 {receiver_email}...")
+        logger.info(f"正在连接SMTP服务器，发送给目标邮箱...")
         # 将SMTP操作放在线程池中执行，以避免阻塞事件循环
         return await asyncio.get_event_loop().run_in_executor(
             None, lambda: _send_email_sync(msg, server, receiver_email)
