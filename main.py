@@ -1,6 +1,6 @@
 import os
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from arxiv import Client, Search, SortCriterion, SortOrder
 from PyPDF2 import PdfReader
 import openai
@@ -558,7 +558,7 @@ def process_user(user_config):
             # 即使没有感兴趣的论文，如果有被过滤的论文，也发送附录
             if filtered_out_papers:
                 filtered_appendix = build_filtered_papers_appendix(filtered_out_papers)
-                asyncio.run(send_email(f"每日ArXiv论文报告 - {user_name}", filtered_appendix, user_email))
+                asyncio.run(send_email(f"{date.today()} ArXiv 论文报告 - {user_name}", filtered_appendix, user_email))
             return
 
     # 第二步：根据配置限制处理的论文数量（硬截断）
@@ -618,7 +618,7 @@ def process_user(user_config):
             full_report += "\n\n" + build_filtered_papers_appendix(filtered_out_papers)
 
         # 发送给该用户
-        asyncio.run(send_email(f"每日ArXiv论文报告 - {user_name}", full_report, user_email))
+        asyncio.run(send_email(f"{date.today()} ArXiv 论文报告 - {user_name}", full_report, user_email))
 
         # 保存报告到用户专属文件
         report_file = f"{user_dir}/report.md"
@@ -664,7 +664,7 @@ if __name__ == "__main__":
         encoding="utf-8"
     )
     # 如果需要立即运行一次，取消下面的注释
-    # daily_job()
+    daily_job()
     
     # 启动定时任务
-    run_scheduler()
+    # run_scheduler()
