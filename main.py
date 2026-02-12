@@ -19,13 +19,14 @@ import time
 from bs4 import BeautifulSoup
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import List, Dict, Optional, Tuple, Any, Union, Callable
 
 
 
-async def send_email(subject, content, receiver_email):
+async def send_email(subject: str, content: str, receiver_email: str) -> bool:
     """发送邮件通知（异步版本）"""
     # 将Markdown内容转换为HTML
-    html_content = markdown2.markdown(content, extras=["tables", "mathjax", "fenced-code-blocks"])
+    html_content = markdown2.markdown(content, extras=["tables", "latex", "fenced-code-blocks"])
     msg = MIMEText(html_content, "html", "utf-8")
     msg["Subject"] = subject
     # msg["From"] = EMAIL_SERVER_CONFIG["sender"]
@@ -46,7 +47,7 @@ async def send_email(subject, content, receiver_email):
         return False
 
 
-def _send_email_sync(msg, server=None, receiver_email=None):
+def _send_email_sync(msg: MIMEText, server: Optional[smtplib.SMTP] = None, receiver_email: Optional[str] = None) -> bool:
     """同步发送邮件的内部函数"""
     try:
         server = smtplib.SMTP(
@@ -85,7 +86,7 @@ def _send_email_sync(msg, server=None, receiver_email=None):
                 logger.warning(f"关闭SMTP连接时发生错误: {str(e)}")
 
 
-def fetch_papers(arxiv_categories):
+def fetch_papers(arxiv_categories: List[str]) -> List[Dict[str, Any]]:
     """获取指定分类的论文"""
     # 构建搜索查询，只包含配置中的主题
     search_query = " OR ".join([f"cat:{cat}" for cat in arxiv_categories])
@@ -127,7 +128,7 @@ def fetch_papers(arxiv_categories):
     logger.success(f"Found {len(papers)} papers published from {target_date.strftime('%Y-%m-%d')}")
     return papers
 
-def download_pdf(url, filename, max_retries=3):
+def download_pdf(url: str, filename: str, max_retries: int = 3) -> bool:
     """下载PDF文件，带有重试机制"""
         # 确保URL是正确的PDF链接
     if 'arxiv.org' in url and not url.endswith('.pdf'):
@@ -168,7 +169,7 @@ def download_pdf(url, filename, max_retries=3):
     
     return False
 
-def extract_text_from_pdf(pdf_path, paper):
+def extract_text_from_pdf(pdf_path: str, paper: Dict[str, Any]) -> str:
     """从PDF提取文本，增加错误处理"""
     text = ""
     try:
@@ -285,7 +286,7 @@ def get_paper_text(paper, user_dir):
 
     return text
 
-def gpt_check_interest(abstract, interest_filter_prompt):
+def gpt_check_interest(abstract: str, interest_filter_prompt: str) -> Tuple[bool, Dict[str, int]]:
     """使用GPT判断用户是否对论文感兴趣
 
     Args:
