@@ -1,0 +1,49 @@
+name: ArXiv Daily Push
+
+on:
+  schedule:
+    # 每天早上10点运行 (北京时间 UTC+8)
+    - cron: '0 10 * * *'
+      timezone: 'Asia/Shanghai'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  run-arxiv-pusher:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies with uv
+      run: uv sync --frozen
+
+    - name: Create config.py from single secret
+      env:
+        CONFIG_PY: ${{ secrets.CONFIG_PY }}
+      run: |
+        printf '%s\n' "$CONFIG_PY" > config.py
+        echo "config.py created from CONFIG_PY secret"
+
+    - name: Run ArXiv Pusher
+      run: python main.py
+
+    - name: Upload logs (if any)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: arxiv-pusher-logs
+        path: |
+          arxiv_pusher.log
+          temp/
+        retention-days: 7
