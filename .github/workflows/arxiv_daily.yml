@@ -2,9 +2,8 @@ name: ArXiv Daily Push
 
 on:
   schedule:
-    # 每天早上10点运行 (北京时间 UTC+8)
-    - cron: '0 10 * * *'
-      timezone: 'Asia/Shanghai'
+    # 每天早上10点运行 (北京时间 UTC+8)，对应UTC时间凌晨2点
+    - cron: '0 2 * * *'
   workflow_dispatch:  # 允许手动触发
 
 jobs:
@@ -36,7 +35,7 @@ jobs:
         echo "config.py created from CONFIG_PY secret"
 
     - name: Run ArXiv Pusher
-      run: python main.py
+      run: uv run python main.py
 
     - name: Upload logs (if any)
       if: always()
