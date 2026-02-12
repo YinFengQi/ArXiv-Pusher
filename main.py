@@ -28,7 +28,8 @@ async def send_email(subject, content, receiver_email):
     html_content = markdown2.markdown(content, extras=["tables", "mathjax", "fenced-code-blocks"])
     msg = MIMEText(html_content, "html", "utf-8")
     msg["Subject"] = subject
-    msg["From"] = EMAIL_SERVER_CONFIG["sender"]
+    # msg["From"] = EMAIL_SERVER_CONFIG["sender"]
+    msg["From"] = "arxiv-bot@noaddress.com"
     msg["To"] = receiver_email
 
     server = None
