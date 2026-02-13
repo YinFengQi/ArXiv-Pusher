@@ -173,3 +173,5 @@ cython_debug/
 config.py
 temp/
 .claude/
+
+*.db
