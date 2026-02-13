@@ -3,7 +3,7 @@ name: ArXiv Daily Push
 on:
   schedule:
     # 每天早上10点运行 (北京时间 UTC+8)，对应UTC时间凌晨2点
-    - cron: '0 2 * * *'
+    - cron: "0 4 * * *"
   workflow_dispatch:  # 允许手动触发
 
 jobs:
