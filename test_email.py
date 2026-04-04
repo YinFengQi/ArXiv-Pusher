@@ -1,7 +1,5 @@
-from main import send_email
 from config import EMAIL_SERVER_CONFIG
-
-import asyncio
+from email_utils import send_email
 
 if __name__ == "__main__":
     # 创建一个简单的测试邮件内容
@@ -11,7 +9,7 @@ if __name__ == "__main__":
     body = "##Test"
 
     # 异步发送邮件
-    result = asyncio.run(send_email("每日ArXiv论文报告", body, EMAIL_SERVER_CONFIG["sender"]))
+    result = send_email("每日ArXiv论文报告", body, EMAIL_SERVER_CONFIG["sender"])
 
     if result:
         print("邮件发送成功")
